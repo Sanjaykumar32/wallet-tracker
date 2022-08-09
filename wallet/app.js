@@ -17,6 +17,8 @@ const mongooseSchema =  new mongoose.Schema({
     name: String,
     totalAmount:String,
     id: String,
+    email:String,
+    password:Number
 })
 
 
@@ -26,16 +28,42 @@ server.use(bodyperser.json());
 server.use(cors());
 
 server.post('/create' , async (req , res)=>{
-    const {name , amount , totalAmount ,id} = req.body
+    const {name , email , password ,  amount , totalAmount ,id} = req.body
     try {
-      await  mongodbData.create({name , amount , totalAmount  , id})
+      await  mongodbData.create({name , email ,  password,  amount , totalAmount  , id})
         res.send(req.body)
+        res.send("Data is save is successfuly")
     } catch (error) {
         res.send(error)
     }
 })
 
+server.get('/getData' , async (req , res)=>{
+    try {
+        const allData = await mongodbData.find()
+        res.send(allData)
+    } catch (error) {
+        res.send(error)
+    }
+})
 
+server.delete("/deleteData" , async (req , res)=>{
+    const {id} =  req.body
+     try {
+        await mongodbData.deleteOne({id})
+        res.send("Data is delete is successfully")
+     } catch (error) {
+        res.send(error)
+     }
+})
+
+server.post('/updateData' , async (req , res)=>{
+    try {
+        const updateData = await mongodbData.updateOne()
+    } catch (error) {
+        console.log(error)
+    }
+})
 
 server.listen(8000 , (()=>{
     console.log("wallet tracker start")
