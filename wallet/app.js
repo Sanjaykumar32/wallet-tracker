@@ -22,7 +22,9 @@ const mongooseSchema = new mongoose.Schema({
   totalAmount: String,
   id: String,
   email: String,
-  password: Number,
+  password: String,
+  userName: String,
+  lastName: String,
 });
 
 const mongodbData = mongoose.model("Wallet", mongooseSchema);
@@ -48,9 +50,10 @@ server.post("/create", async (req, res) => {
   }
 });
 
-// <----------------------- singUp -------------------->
+// <----------------------- signUp -------------------->
 
-server.post("/singUp", async (req, res) => {
+server.post("/signUp", async (req, res) => {
+  console.log(req.body);
   const { userName, lastName, email, password } = req.body;
 
   try {
@@ -70,15 +73,13 @@ server.post("/singUp", async (req, res) => {
     });
 
     const token = jwt.sign({ email: result.email, id: result._id }, SECRET_KEY);
-    res.status(201).json({ user: result, token: token });
+    res.status(201).json({ result: result, token: token });
   } catch (error) {
     res.status(500).json({ massage: "Somthing went wrong" });
   }
 });
 
-
-
-
+// <<<<<<<--------------- sign In ----------------->>>>>>>>>>>>
 
 server.get("/getData", async (req, res) => {
   try {
