@@ -81,6 +81,34 @@ server.post("/signUp", async (req, res) => {
 
 // <<<<<<<--------------- sign In ----------------->>>>>>>>>>>>
 
+
+server.post("/signIn" , async (req , res)=> {
+   const {email, password} = req.body
+   console.log(email , password)
+  try {
+    
+    const existinguser =  await mongodbData.findOne({email : email})
+
+    if(!existinguser){
+      return res.status(404).json({message : "User not found"})
+    }
+
+    const matchPassword =  await bcrypt.compare(password , existinguser.password)
+
+    if(!matchPassword){
+      return res.status(400).json({message : "Invalid  Credentials "})
+    }
+
+    const token =  jwt.sign({ email :existinguser.email , id : existinguser._id} , SECRET_KEY)
+    res.status(201).json({ result : existinguser , token : token})
+
+  } catch (error) {
+      res.status(500).json({message : "Somthing went wrong"})
+  }
+})
+
+// <<<<<<<<<<<<< ----------------  get Data --------------->>>>>>>>>>>>>>>.
+
 server.get("/getData", async (req, res) => {
   try {
     const allData = await mongodbData.find();
